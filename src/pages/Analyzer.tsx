@@ -81,9 +81,9 @@ export default function Analyzer() {
   };
 
   return (
-    <div className="container mx-auto px-6 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 py-6 max-w-6xl sm:px-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <h1 className="font-display text-3xl font-bold text-white mb-2 flex items-center gap-3">
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center gap-3">
           <Sparkles className="w-8 h-8 text-bio-cyan" />
           DNA/RNA 分析器
         </h1>
@@ -108,7 +108,7 @@ export default function Analyzer() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="输入或粘贴 DNA 序列，如 ATGGCTACGAATTCCG..."
-            className="input-bio min-h-[100px] resize-none font-mono text-lg tracking-wider"
+            className="input-bio min-h-[100px] resize-none font-mono text-sm sm:text-lg tracking-wider"
             spellCheck={false}
           />
           <div className="absolute bottom-3 right-3 flex gap-3">

@@ -399,8 +399,8 @@ export default function ProteinLibrary() {
         </div>
       </div>
 
-      <div className="flex gap-4" style={{ height: 'calc(100vh - 160px)' }}>
-        <div className="w-72 flex flex-col bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
+      <div className="flex flex-col lg:flex-row gap-4" style={{ height: 'calc(100vh - 140px)' }}>
+        <div className="lg:w-72 flex flex-col bg-space-800/50 rounded-xl border border-white/10 overflow-hidden max-h-[300px] lg:max-h-none lg:order-1 order-2">
           <div className="p-3 border-b border-white/10">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -463,11 +463,11 @@ export default function ProteinLibrary() {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden order-1 lg:order-2">
           {selectedProtein ? (
             <>
-              <div className="flex-1 overflow-y-auto">
-                <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden">
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 mb-4">
                   <div className="p-4 bg-space-800/50 rounded-xl border border-white/10">
                     <h4 className="text-bio-cyan font-medium mb-2 flex items-center gap-2 text-sm">
                       <Info className="w-4 h-4" />
@@ -516,7 +516,7 @@ export default function ProteinLibrary() {
                     </p>
                   </div>
 
-                  <div className="col-span-2 p-4 bg-space-800/50 rounded-xl border border-white/10">
+                  <div className="col-span-1 xl:col-span-2 p-4 bg-space-800/50 rounded-xl border border-white/10">
                     <h4 className="text-purple-400 font-medium mb-2 text-sm">相关通路</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedProtein.pathway.map((p, i) => (
@@ -530,10 +530,10 @@ export default function ProteinLibrary() {
               </div>
 
               <div className="flex-shrink-0 bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
-                <div className="p-4 border-b border-white/10">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-white">{selectedProtein.nameCn}</h3>
+                <div className="p-3 border-b border-white/10">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base sm:text-lg font-semibold text-white">{selectedProtein.nameCn}</h3>
                       <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">
                         {selectedProtein.category}
                       </span>
@@ -566,7 +566,7 @@ export default function ProteinLibrary() {
                   </div>
                 </div>
 
-                <div className="relative" style={{ height: '280px' }}>
+                <div className="relative" style={{ height: '250px' }}>
                   {isLoading && (
                     <div className="absolute inset-0 flex items-center justify-center bg-space-900/80 z-10">
                       <Loader2 className="w-8 h-8 text-bio-cyan animate-spin" />
