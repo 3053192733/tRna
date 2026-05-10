@@ -19,11 +19,27 @@ interface ProteinAnalyzerProps {
   aminoAcids: string[];
 }
 
-const COMMON_PROTEINS: Record<string, { name: string; pdbId: string; description: string; organism: string }> = {
-  'MVLSPADKTN': { name: 'Hemoglobin Alpha', pdbId: '1A3N', description: '血红蛋白 α 亚基 - 负责运输氧气', organism: 'Homo sapiens' },
-  'MVHLTPEEK': { name: 'Hemoglobin Beta', pdbId: '1A3N', description: '血红蛋白 β 亚基 - 负责运输氧气', organism: 'Homo sapiens' },
-  'INS': { name: 'Insulin', pdbId: '4INS', description: '胰岛素 - 调节血糖水平', organism: 'Homo sapiens' },
-  'MVLSGEDIE': { name: 'Green Fluorescent Protein', pdbId: '1GFL', description: '绿色荧光蛋白 - 生物成像标记', organism: 'Aequorea victoria' },
+const COMMON_PROTEINS: Record<string, { name: string; pdbId: string; description: string; organism: string; pathway: string[]; geneName: string }> = {
+  'MVLSPADKTN': { name: 'Hemoglobin Alpha', pdbId: '1A3N', description: '血红蛋白 α 亚基 - 负责运输氧气', organism: 'Homo sapiens', pathway: ['氧气运输', '血液循环'], geneName: 'HBA1' },
+  'MVHLTPEEK': { name: 'Hemoglobin Beta', pdbId: '1A3N', description: '血红蛋白 β 亚基 - 负责运输氧气', organism: 'Homo sapiens', pathway: ['氧气运输', '血液循环'], geneName: 'HBB' },
+  'MVLSGEDIE': { name: 'Green Fluorescent Protein', pdbId: '1GFL', description: '绿色荧光蛋白 - 生物成像标记', organism: 'Aequorea victoria', pathway: ['生物发光', '荧光标记'], geneName: 'GFP' },
+  'FVNQHLCGSH': { name: 'Insulin', pdbId: '4INS', description: '胰岛素 - 调节血糖水平', organism: 'Homo sapiens', pathway: ['葡萄糖代谢', '胰岛素信号'], geneName: 'INS' },
+  'MATGGRRGAA': { name: 'Histone H3', pdbId: '1AOI', description: '组蛋白 H3 - 染色质结构核心', organism: 'Homo sapiens', pathway: ['染色体结构', '表观遗传'], geneName: 'H3' },
+  'MEFAPGNLPE': { name: 'Ubiquitin', pdbId: '1UBQ', description: '泛素 - 蛋白质降解标记', organism: 'Homo sapiens', pathway: ['蛋白质降解', '细胞信号'], geneName: 'UBC' },
+  'MLSCEEKAGV': { name: 'Cytochrome C', pdbId: '1HRC', description: '细胞色素 C - 电子传递链', organism: 'Homo sapiens', pathway: ['电子传递', '细胞凋亡'], geneName: 'CYCS' },
+  'MEAGSHHSSA': { name: 'Lysozyme', pdbId: '1LZE', description: '溶菌酶 - 抗菌酶', organism: 'Gallus gallus', pathway: ['免疫防御', '细菌溶解'], geneName: 'LYZ' },
+  'MPIQNPQPNA': { name: 'Myoglobin', pdbId: '1MBN', description: '肌红蛋白 - 肌肉氧气储存', organism: 'Physeter catodon', pathway: ['氧气储存', '肌肉代谢'], geneName: 'MB' },
+  'MALKSLVLLS': { name: 'Ribonuclease A', pdbId: '7RSA', description: '核糖核酸酶 A - RNA 降解', organism: 'Bos taurus', pathway: ['RNA 加工', '核酸代谢'], geneName: 'RNASE1' },
+  'MALWMRLLPL': { name: 'Trypsin', pdbId: '1G36', description: '胰蛋白酶 - 蛋白质消化', organism: 'Bos taurus', pathway: ['蛋白质消化', '丝氨酸蛋白酶'], geneName: 'PRSS1' },
+  'MRGSHHHHHH': { name: 'Thioredoxin', pdbId: '1TRX', description: '硫氧还蛋白 - 氧化还原调节', organism: 'Escherichia coli', pathway: ['氧化还原', '二硫键形成'], geneName: 'TXN' },
+  'MTEYKLVVVG': { name: 'Ras Protein', pdbId: '5P21', description: 'Ras 蛋白 - 细胞信号开关', organism: 'Homo sapiens', pathway: ['细胞增殖', '信号转导'], geneName: 'HRAS' },
+  'MLGKEDGPGK': { name: 'Protein Kinase A', pdbId: '1ATP', description: '蛋白激酶 A - 磷酸化调节', organism: 'Bos taurus', pathway: ['信号转导', '磷酸化'], geneName: 'PRKACA' },
+  'MDAMKRGLCC': { name: 'Superoxide Dismutase', pdbId: '2SOD', description: '超氧化物歧化酶 - 抗氧化', organism: 'Homo sapiens', pathway: ['抗氧化', 'ROS 清除'], geneName: 'SOD1' },
+  'MSDMKRGAPP': { name: 'P53', pdbId: '1TUP', description: 'P53 - 肿瘤抑制蛋白', organism: 'Homo sapiens', pathway: ['细胞周期', 'DNA 修复'], geneName: 'TP53' },
+  'MDIAIQMKKF': { name: 'Calmodulin', pdbId: '1CLL', description: '钙调蛋白 - 钙信号传感器', organism: 'Rattus norvegicus', pathway: ['钙信号', '酶调节'], geneName: 'CALM1' },
+  'MKKVIFIGAG': { name: 'Alcohol Dehydrogenase', pdbId: '6ADH', description: '乙醇脱氢酶 - 酒精代谢', organism: 'Homo sapiens', pathway: ['酒精代谢', '氧化还原'], geneName: 'ADH1B' },
+  'MATPSDPSAA': { name: 'Enhanced GFP', pdbId: '2Y0G', description: '增强型 GFP - 更亮的荧光', organism: 'Aequorea victoria', pathway: ['荧光成像', '生物标记'], geneName: 'EGFP' },
+  'MEAGPSGHSA': { name: 'Chymotrypsin', pdbId: '4CHA', description: '糜蛋白酶 - 蛋白质消化', organism: 'Bos taurus', pathway: ['蛋白质消化', '丝氨酸蛋白酶'], geneName: 'CTRB1' },
 };
 
 export default function ProteinAnalyzer({ aminoAcids }: ProteinAnalyzerProps) {
@@ -36,14 +52,14 @@ export default function ProteinAnalyzer({ aminoAcids }: ProteinAnalyzerProps) {
 
   const cleanSequence = aminoAcids.filter(a => a !== '*').join('');
 
-  const findMatch = (): { name: string; pdbId: string; description: string; organism: string } | null => {
+  const findMatch = (): { name: string; pdbId: string; description: string; organism: string; pathway: string[]; geneName: string } | null => {
     for (const [pattern, info] of Object.entries(COMMON_PROTEINS)) {
       if (cleanSequence.includes(pattern) || pattern.startsWith(cleanSequence.slice(0, Math.min(5, cleanSequence.length)))) {
         return info;
       }
     }
     if (cleanSequence.length >= 10) {
-      return { name: '未知蛋白质', pdbId: '1HBA', description: '该序列可能与血红蛋白相关', organism: '未知' };
+      return { name: '未知蛋白质', pdbId: '1HBA', description: '该序列可能与血红蛋白相关', organism: '未知', pathway: ['蛋白质合成'], geneName: '-' };
     }
     return null;
   };
@@ -60,11 +76,11 @@ export default function ProteinAnalyzer({ aminoAcids }: ProteinAnalyzerProps) {
         setProteinInfo({
           entryName: match.name,
           proteinName: match.name,
-          geneName: match.name.includes('Hemoglobin') ? (match.name.includes('Alpha') ? 'HBA1' : 'HBB') : '-',
+          geneName: match.geneName,
           organism: match.organism,
           length: cleanSequence.length,
           function: match.description,
-          pathway: ['蛋白质合成', '氧气运输'],
+          pathway: match.pathway,
           pdbId: match.pdbId,
           sequence: cleanSequence,
         });
