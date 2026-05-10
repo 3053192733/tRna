@@ -24,7 +24,7 @@ export default function TRNAVisualizer() {
           <FlaskConical className="w-7 h-7 sm:w-8 sm:h-8 text-bio-cyan" />
           tRNA 可视化器
         </h1>
-        <p className="text-gray-400">探索 tRNA（转运RNA）的三叶草二级结构</p>
+        <p className="text-gray-400">探索 tRNA（转运RNA）的三叶草二级结构与真实3D模型</p>
       </motion.div>
 
       <div className="grid lg:grid-cols-[1fr,350px] gap-6">
