@@ -280,10 +280,13 @@ export default function ProteinAnalyzer({ aminoAcids }: ProteinAnalyzerProps) {
                 </div>
               </div>
 
-              <div
-                ref={viewerRef}
-                className="w-full h-80 rounded-xl bg-space-900/80 border border-white/10 overflow-hidden"
-              />
+              <div className="relative w-full h-[320px] rounded-xl bg-space-900/80 border border-white/10 overflow-hidden" style={{ zIndex: 1, position: 'relative' }}>
+                <div
+                  ref={viewerRef}
+                  className="absolute inset-0 w-full h-full"
+                  style={{ position: 'absolute', top: 0, left: 0 }}
+                />
+              </div>
 
               {proteinInfo.pdbId && (
                 <p className="text-xs text-gray-500 mt-2 text-center">
