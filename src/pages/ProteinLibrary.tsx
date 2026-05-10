@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import $3Dmol from '3dmol';
 import { Dna, Search, ExternalLink, Info, Loader2, Microscope } from 'lucide-react';
@@ -264,12 +264,14 @@ const CATEGORIES = ['全部', '酶', '运输蛋白', '结构蛋白', '信号蛋�
 export default function ProteinLibrary() {
   const viewerRef = useRef<HTMLDivElement>(null);
   const viewerInstanceRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [selectedProtein, setSelectedProtein] = useState<Protein | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [viewStyle, setViewStyle] = useState<'cartoon' | 'stick' | 'sphere'>('cartoon');
   const [isSpinning, setIsSpinning] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('全部');
+  const [currentPdbId, setCurrentPdbId] = useState<string | null>(null);
 
   const filteredProteins = PROTEIN_DATABASE.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -279,22 +281,39 @@ export default function ProteinLibrary() {
     return matchesSearch && matchesCategory;
   });
 
-  const loadStructure = async (pdbId: string) => {
-    if (!viewerRef.current) return;
-
-    setIsLoading(true);
-
+  const clearViewer = useCallback(() => {
     if (viewerInstanceRef.current) {
-      viewerInstanceRef.current.clear();
+      try {
+        viewerInstanceRef.current.spin(false);
+        viewerInstanceRef.current.clear();
+        viewerInstanceRef.current = null;
+      } catch (e) {
+        console.error('Error clearing viewer:', e);
+      }
+    }
+    setCurrentPdbId(null);
+    setIsSpinning(false);
+  }, []);
+
+  const loadStructure = useCallback(async (pdbId: string) => {
+    if (!viewerRef.current || !containerRef.current) return;
+
+    if (pdbId === currentPdbId && viewerInstanceRef.current) {
+      return;
     }
 
-    const viewer = $3Dmol.createViewer(viewerRef.current, {
-      backgroundColor: 'rgba(10, 14, 26, 0.5)',
-    });
-
-    viewerInstanceRef.current = viewer;
+    clearViewer();
+    setIsLoading(true);
 
     try {
+      const viewer = $3Dmol.createViewer(viewerRef.current, {
+        backgroundColor: 'rgba(10, 14, 26, 0.5)',
+        id: pdbId
+      });
+
+      viewerInstanceRef.current = viewer;
+      setCurrentPdbId(pdbId);
+
       await $3Dmol.download(`pdb:${pdbId}`, viewer, {}, (): void => {
         viewer.setStyle({}, { cartoon: { color: 'spectrum' } });
         viewer.zoomTo();
@@ -304,17 +323,41 @@ export default function ProteinLibrary() {
       });
     } catch (err) {
       console.error('Failed to load structure:', err);
-      viewer.setStyle({}, { stick: {} });
-      viewer.render();
+      if (viewerInstanceRef.current) {
+        viewerInstanceRef.current.setStyle({}, { stick: {} });
+        viewerInstanceRef.current.render();
+      }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPdbId, clearViewer]);
 
   const handleSelectProtein = (protein: Protein) => {
     setSelectedProtein(protein);
-    loadStructure(protein.pdbId);
   };
+
+  useEffect(() => {
+    if (selectedProtein) {
+      loadStructure(selectedProtein.pdbId);
+    }
+  }, [selectedProtein, loadStructure]);
+
+  useEffect(() => {
+    return () => {
+      clearViewer();
+    };
+  }, [clearViewer]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (viewerInstanceRef.current) {
+        viewerInstanceRef.current.resize();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const changeViewStyle = (style: 'cartoon' | 'stick' | 'sphere') => {
     setViewStyle(style);
@@ -336,21 +379,13 @@ export default function ProteinLibrary() {
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (viewerInstanceRef.current) {
-        viewerInstanceRef.current.clear();
-      }
-    };
-  }, []);
-
   return (
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
-      className="h-full"
+      className="h-full overflow-hidden"
     >
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="font-display text-2xl font-bold text-white flex items-center gap-3">
           <Microscope className="w-7 h-7 text-bio-cyan" />
           蛋白质数据库
@@ -360,9 +395,9 @@ export default function ProteinLibrary() {
         </div>
       </div>
 
-      <div className="flex gap-6 h-[calc(100vh-200px)]">
-        <div className="w-80 flex flex-col bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
-          <div className="p-4 border-b border-white/10">
+      <div className="flex gap-4" style={{ height: 'calc(100vh - 160px)' }}>
+        <div className="w-72 flex flex-col bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
+          <div className="p-3 border-b border-white/10">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
@@ -375,13 +410,13 @@ export default function ProteinLibrary() {
             </div>
           </div>
 
-          <div className="p-3 border-b border-white/10 overflow-x-auto">
-            <div className="flex gap-2 min-w-max">
+          <div className="p-2 border-b border-white/10 overflow-x-auto">
+            <div className="flex gap-1 min-w-max">
               {CATEGORIES.map(cat => (
                 <button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
-                  className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-colors ${
+                  className={`px-2 py-1 rounded text-xs whitespace-nowrap transition-colors ${
                     selectedCategory === cat 
                       ? 'bg-bio-cyan/20 text-bio-cyan' 
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
@@ -398,26 +433,25 @@ export default function ProteinLibrary() {
               <button
                 key={protein.id}
                 onClick={() => handleSelectProtein(protein)}
-                className={`w-full p-4 text-left border-b border-white/5 transition-colors ${
+                className={`w-full p-3 text-left border-b border-white/5 transition-colors ${
                   selectedProtein?.id === protein.id 
                     ? 'bg-bio-cyan/10 border-l-2 border-l-bio-cyan' 
                     : 'hover:bg-white/5 border-l-2 border-l-transparent'
                 }`}
               >
-                <div className="flex items-start gap-3">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                <div className="flex items-start gap-2">
+                  <div className={`w-8 h-8 rounded flex items-center justify-center flex-shrink-0 ${
                     selectedProtein?.id === protein.id ? 'bg-bio-cyan/20' : 'bg-space-700/50'
                   }`}>
-                    <Dna className={`w-5 h-5 ${selectedProtein?.id === protein.id ? 'text-bio-cyan' : 'text-gray-400'}`} />
+                    <Dna className={`w-4 h-4 ${selectedProtein?.id === protein.id ? 'text-bio-cyan' : 'text-gray-400'}`} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className={`font-medium truncate ${
+                    <div className={`text-sm font-medium truncate ${
                       selectedProtein?.id === protein.id ? 'text-bio-cyan' : 'text-white'
                     }`}>
                       {protein.name}
                     </div>
-                    <div className="text-xs text-gray-400 mt-0.5">{protein.geneName}</div>
-                    <div className="text-xs text-gray-500 mt-1">{protein.organism}</div>
+                    <div className="text-xs text-gray-400">{protein.geneName}</div>
                   </div>
                 </div>
               </button>
@@ -425,47 +459,49 @@ export default function ProteinLibrary() {
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           {selectedProtein ? (
             <>
-              <div className="flex-1 bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
-                <div className="flex items-center justify-between p-4 border-b border-white/10">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-lg font-semibold text-white">{selectedProtein.name}</h3>
-                    <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">
-                      {selectedProtein.category}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex bg-space-700/50 rounded-lg p-1">
-                      {(['cartoon', 'stick', 'sphere'] as const).map((style) => (
-                        <button
-                          key={style}
-                          onClick={() => changeViewStyle(style)}
-                          className={`px-3 py-1 rounded text-xs transition-colors ${
-                            viewStyle === style ? 'bg-bio-cyan/20 text-bio-cyan' : 'text-gray-400 hover:text-white'
-                          }`}
-                        >
-                          {style === 'cartoon' ? '带状' : style === 'stick' ? '棍状' : '球状'}
-                        </button>
-                      ))}
+              <div className="flex-shrink-0 bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
+                <div className="p-4 border-b border-white/10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-semibold text-white">{selectedProtein.name}</h3>
+                      <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">
+                        {selectedProtein.category}
+                      </span>
                     </div>
-                    <button
-                      onClick={toggleSpin}
-                      className={`px-3 py-1 rounded-lg text-xs transition-colors ${
-                        isSpinning 
-                          ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
-                          : 'bg-space-700/50 text-gray-400 hover:text-white'
-                      }`}
-                    >
-                      {isSpinning ? '停止旋转' : '旋转'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <div className="flex bg-space-700/50 rounded-lg p-1">
+                        {(['cartoon', 'stick', 'sphere'] as const).map((style) => (
+                          <button
+                            key={style}
+                            onClick={() => changeViewStyle(style)}
+                            className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                              viewStyle === style ? 'bg-bio-cyan/20 text-bio-cyan' : 'text-gray-400 hover:text-white'
+                            }`}
+                          >
+                            {style === 'cartoon' ? '带状' : style === 'stick' ? '棍状' : '球状'}
+                          </button>
+                        ))}
+                      </div>
+                      <button
+                        onClick={toggleSpin}
+                        className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                          isSpinning 
+                            ? 'bg-red-500/20 text-red-400' 
+                            : 'bg-space-700/50 text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        {isSpinning ? '停止' : '旋转'}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                <div className="relative h-[400px]">
+                <div className="relative" style={{ height: '280px' }}>
                   {isLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-space-900/50 z-10">
+                    <div className="absolute inset-0 flex items-center justify-center bg-space-900/80 z-10">
                       <Loader2 className="w-8 h-8 text-bio-cyan animate-spin" />
                     </div>
                   )}
@@ -473,55 +509,57 @@ export default function ProteinLibrary() {
                 </div>
               </div>
 
-              <div className="mt-4 grid grid-cols-2 gap-4">
-                <div className="p-4 bg-space-800/50 rounded-xl border border-white/10">
-                  <h4 className="text-bio-cyan font-medium mb-3 flex items-center gap-2">
-                    <Info className="w-4 h-4" />
-                    基本信息
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">基因名</span>
-                      <span className="text-white font-mono">{selectedProtein.geneName}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">物种来源</span>
-                      <span className="text-white">{selectedProtein.organism}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">氨基酸数量</span>
-                      <span className="text-white">{selectedProtein.length}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">PDB ID</span>
-                      <a
-                        href={`https://www.rcsb.org/structure/${selectedProtein.pdbId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-bio-cyan hover:underline flex items-center gap-1"
-                      >
-                        {selectedProtein.pdbId}
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
+              <div className="flex-1 mt-4 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-4 bg-space-800/50 rounded-xl border border-white/10">
+                    <h4 className="text-bio-cyan font-medium mb-2 flex items-center gap-2 text-sm">
+                      <Info className="w-4 h-4" />
+                      基本信息
+                    </h4>
+                    <div className="space-y-1.5 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">基因名</span>
+                        <span className="text-white font-mono">{selectedProtein.geneName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">物种来源</span>
+                        <span className="text-white text-right max-w-[150px] truncate">{selectedProtein.organism}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">氨基酸数量</span>
+                        <span className="text-white">{selectedProtein.length}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">PDB ID</span>
+                        <a
+                          href={`https://www.rcsb.org/structure/${selectedProtein.pdbId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-bio-cyan hover:underline flex items-center gap-1"
+                        >
+                          {selectedProtein.pdbId}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="p-4 bg-space-800/50 rounded-xl border border-white/10">
-                  <h4 className="text-yellow-400 font-medium mb-3">蛋白质功能</h4>
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    {selectedProtein.function}
-                  </p>
-                </div>
+                  <div className="p-4 bg-space-800/50 rounded-xl border border-white/10">
+                    <h4 className="text-yellow-400 font-medium mb-2 text-sm">蛋白质功能</h4>
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                      {selectedProtein.function}
+                    </p>
+                  </div>
 
-                <div className="col-span-2 p-4 bg-space-800/50 rounded-xl border border-white/10">
-                  <h4 className="text-purple-400 font-medium mb-3">相关通路</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProtein.pathway.map((p, i) => (
-                      <span key={i} className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs">
-                        {p}
-                      </span>
-                    ))}
+                  <div className="col-span-2 p-4 bg-space-800/50 rounded-xl border border-white/10">
+                    <h4 className="text-purple-400 font-medium mb-2 text-sm">相关通路</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProtein.pathway.map((p, i) => (
+                        <span key={i} className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs">
+                          {p}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

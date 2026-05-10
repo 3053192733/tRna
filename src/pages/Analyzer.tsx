@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Trash2, Copy, Check } from 'lucide-react';
-import ProteinAnalyzer from '@/components/dna/ProteinAnalyzer';
 import { cleanSequence } from '@/utils/sequence';
 import { getComplement } from '@/utils/complement';
 import { transcribe } from '@/utils/transcription';
@@ -454,12 +453,6 @@ export default function Analyzer() {
               </div>
             )}
           </motion.div>
-
-          {translation.aminoAcids.length > 0 && (
-            <ProteinAnalyzer
-              aminoAcids={translation.aminoAcids}
-            />
-          )}
         </>
       )}
     </div>
