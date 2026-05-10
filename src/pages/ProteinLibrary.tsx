@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import $3Dmol from '3dmol';
 import { Dna, Search, ExternalLink, Info, Loader2, Microscope } from 'lucide-react';
@@ -264,14 +264,12 @@ const CATEGORIES = ['全部', '酶', '运输蛋白', '结构蛋白', '信号蛋�
 export default function ProteinLibrary() {
   const viewerRef = useRef<HTMLDivElement>(null);
   const viewerInstanceRef = useRef<any>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const [selectedProtein, setSelectedProtein] = useState<Protein | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [viewStyle, setViewStyle] = useState<'cartoon' | 'stick' | 'sphere'>('cartoon');
   const [isSpinning, setIsSpinning] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('全部');
-  const [currentPdbId, setCurrentPdbId] = useState<string | null>(null);
 
   const filteredProteins = PROTEIN_DATABASE.filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -281,39 +279,23 @@ export default function ProteinLibrary() {
     return matchesSearch && matchesCategory;
   });
 
-  const clearViewer = useCallback(() => {
-    if (viewerInstanceRef.current) {
-      try {
-        viewerInstanceRef.current.spin(false);
-        viewerInstanceRef.current.clear();
-        viewerInstanceRef.current = null;
-      } catch (e) {
-        console.error('Error clearing viewer:', e);
-      }
-    }
-    setCurrentPdbId(null);
-    setIsSpinning(false);
-  }, []);
+  const loadStructure = async (pdbId: string) => {
+    if (!viewerRef.current) return;
 
-  const loadStructure = useCallback(async (pdbId: string) => {
-    if (!viewerRef.current || !containerRef.current) return;
-
-    if (pdbId === currentPdbId && viewerInstanceRef.current) {
-      return;
-    }
-
-    clearViewer();
     setIsLoading(true);
 
+    if (viewerInstanceRef.current) {
+      viewerInstanceRef.current.spin(false);
+      viewerInstanceRef.current.clear();
+    }
+
+    const viewer = $3Dmol.createViewer(viewerRef.current, {
+      backgroundColor: 'rgba(10, 14, 26, 0.5)',
+    });
+
+    viewerInstanceRef.current = viewer;
+
     try {
-      const viewer = $3Dmol.createViewer(viewerRef.current, {
-        backgroundColor: 'rgba(10, 14, 26, 0.5)',
-        id: pdbId
-      });
-
-      viewerInstanceRef.current = viewer;
-      setCurrentPdbId(pdbId);
-
       await $3Dmol.download(`pdb:${pdbId}`, viewer, {}, (): void => {
         viewer.setStyle({}, { cartoon: { color: 'spectrum' } });
         viewer.zoomTo();
@@ -323,41 +305,17 @@ export default function ProteinLibrary() {
       });
     } catch (err) {
       console.error('Failed to load structure:', err);
-      if (viewerInstanceRef.current) {
-        viewerInstanceRef.current.setStyle({}, { stick: {} });
-        viewerInstanceRef.current.render();
-      }
+      viewer.setStyle({}, { stick: {} });
+      viewer.render();
     } finally {
       setIsLoading(false);
     }
-  }, [currentPdbId, clearViewer]);
+  };
 
   const handleSelectProtein = (protein: Protein) => {
     setSelectedProtein(protein);
+    loadStructure(protein.pdbId);
   };
-
-  useEffect(() => {
-    if (selectedProtein) {
-      loadStructure(selectedProtein.pdbId);
-    }
-  }, [selectedProtein, loadStructure]);
-
-  useEffect(() => {
-    return () => {
-      clearViewer();
-    };
-  }, [clearViewer]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (viewerInstanceRef.current) {
-        viewerInstanceRef.current.resize();
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const changeViewStyle = (style: 'cartoon' | 'stick' | 'sphere') => {
     setViewStyle(style);
@@ -378,6 +336,25 @@ export default function ProteinLibrary() {
       }
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (viewerInstanceRef.current) {
+        viewerInstanceRef.current.clear();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (viewerInstanceRef.current) {
+        viewerInstanceRef.current.resize();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <motion.div 
