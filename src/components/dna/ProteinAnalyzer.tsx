@@ -49,6 +49,7 @@ export default function ProteinAnalyzer({ aminoAcids }: ProteinAnalyzerProps) {
   const [proteinInfo, setProteinInfo] = useState<ProteinInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [viewStyle, setViewStyle] = useState<'cartoon' | 'stick' | 'sphere'>('cartoon');
+  const [isSpinning, setIsSpinning] = useState(false);
 
   const cleanSequence = aminoAcids.filter(a => a !== '*').join('');
 
@@ -127,7 +128,8 @@ export default function ProteinAnalyzer({ aminoAcids }: ProteinAnalyzerProps) {
         viewer.render();
 
         viewer.spin('y', 0.5);
-      });
+          setIsSpinning(true);
+        });
     } catch (err) {
       console.error('Failed to load structure:', err);
       viewer.setStyle({}, { stick: {} });
@@ -145,11 +147,12 @@ export default function ProteinAnalyzer({ aminoAcids }: ProteinAnalyzerProps) {
 
   const toggleSpin = () => {
     if (viewerInstanceRef.current) {
-      const isSpinning = viewerInstanceRef.current.isAnimated();
       if (isSpinning) {
         viewerInstanceRef.current.spin(false);
+        setIsSpinning(false);
       } else {
         viewerInstanceRef.current.spin('y', 0.5);
+        setIsSpinning(true);
       }
     }
   };
@@ -273,9 +276,13 @@ export default function ProteinAnalyzer({ aminoAcids }: ProteinAnalyzerProps) {
                   </div>
                   <button
                     onClick={toggleSpin}
-                    className="px-3 py-1 bg-space-700/50 rounded-lg text-gray-400 hover:text-white text-xs transition-colors"
+                    className={`px-3 py-1 rounded-lg text-xs transition-colors ${
+                      isSpinning 
+                        ? 'bg-red-500/20 text-red-400 hover:bg-red-500/30' 
+                        : 'bg-space-700/50 text-gray-400 hover:text-white'
+                    }`}
                   >
-                    旋转
+                    {isSpinning ? '停止旋转' : '旋转'}
                   </button>
                 </div>
               </div>
