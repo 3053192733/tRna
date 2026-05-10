@@ -143,79 +143,8 @@ export default function ProteinLibrary() {
         <div className="text-sm text-gray-400">共 {PROTEIN_DATABASE.length} 种</div>
       </div>
 
-      <div className="px-4 space-y-4">
-        {selectedProtein && (
-          <>
-            <div className="bg-space-800/50 rounded-xl border border-white/10 p-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-bio-cyan font-medium mb-2 flex items-center gap-2 text-sm">
-                    <Info className="w-4 h-4" />
-                    基本信息
-                  </h4>
-                  <div className="space-y-1.5 text-sm">
-                    <div className="flex justify-between"><span className="text-gray-400">名称</span><span className="text-white">{selectedProtein.nameCn}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-400">英文名</span><span className="text-white text-right truncate">{selectedProtein.name}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-400">基因名</span><span className="text-white font-mono">{selectedProtein.geneName}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-400">物种来源</span><span className="text-white text-right truncate">{selectedProtein.organism}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-400">氨基酸数量</span><span className="text-white">{selectedProtein.length}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-400">PDB ID</span>
-                      <a href={`https://www.rcsb.org/structure/${selectedProtein.pdbId}`} target="_blank" rel="noopener noreferrer" className="text-bio-cyan hover:underline flex items-center gap-1">
-                        {selectedProtein.pdbId}
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-yellow-400 font-medium mb-2 text-sm">蛋白质功能</h4>
-                  <p className="text-gray-300 text-sm leading-relaxed">{selectedProtein.function}</p>
-                </div>
-              </div>
-              <div className="mt-4">
-                <h4 className="text-purple-400 font-medium mb-2 text-sm">相关通路</h4>
-                <div className="flex flex-wrap gap-2">
-                  {selectedProtein.pathway.map((p, i) => (
-                    <span key={i} className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs">{p}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
-              <div className="p-3 border-b border-white/10">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-base sm:text-lg font-semibold text-white">{selectedProtein.nameCn}</h3>
-                    <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">{selectedProtein.category}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="flex bg-space-700/50 rounded-lg p-1">
-                      {(['cartoon', 'stick', 'sphere'] as const).map((style) => (
-                        <button key={style} onClick={() => changeViewStyle(style)} className={`px-2 py-0.5 rounded text-xs transition-colors ${viewStyle === style ? 'bg-bio-cyan/20 text-bio-cyan' : 'text-gray-400 hover:text-white'}`}>
-                          {style === 'cartoon' ? '带状' : style === 'stick' ? '棍状' : '球状'}
-                        </button>
-                      ))}
-                    </div>
-                    <button onClick={toggleSpin} className={`px-2 py-0.5 rounded text-xs transition-colors ${isSpinning ? 'bg-red-500/20 text-red-400' : 'bg-space-700/50 text-gray-400 hover:text-white'}`}>
-                      {isSpinning ? '停止' : '旋转'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="relative" style={{ height: '250px' }}>
-                {isLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-space-900/80 z-10">
-                    <Loader2 className="w-8 h-8 text-bio-cyan animate-spin" />
-                  </div>
-                )}
-                <div ref={viewerRef} className="w-full h-full" />
-              </div>
-            </div>
-          </>
-        )}
-
-        <div className="bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
+      <div className="flex flex-col lg:flex-row gap-4 px-4">
+        <div className="lg:w-72 bg-space-800/50 rounded-xl border border-white/10 overflow-hidden lg:order-1 order-2">
           <div className="p-3 border-b border-white/10">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
@@ -239,7 +168,7 @@ export default function ProteinLibrary() {
             </div>
           </div>
 
-          <div className="max-h-[200px] sm:max-h-[300px] overflow-y-auto">
+          <div className="max-h-[250px] lg:max-h-[calc(100vh-280px)] overflow-y-auto">
             {filteredProteins.map(protein => (
               <button
                 key={protein.id}
@@ -262,13 +191,84 @@ export default function ProteinLibrary() {
           </div>
         </div>
 
-        {!selectedProtein && (
-          <div className="bg-space-800/50 rounded-xl border border-white/10 p-8 text-center">
-            <Microscope className="w-16 h-16 mx-auto mb-4 opacity-30" />
-            <p className="text-gray-500">从下方列表选择蛋白质</p>
-            <p className="text-xs text-gray-600 mt-2">查看蛋白质结构和详细信息</p>
-          </div>
-        )}
+        <div className="flex-1 lg:order-2 order-1 space-y-4">
+          {selectedProtein ? (
+            <>
+              <div className="bg-space-800/50 rounded-xl border border-white/10 p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-bio-cyan font-medium mb-2 flex items-center gap-2 text-sm">
+                      <Info className="w-4 h-4" />
+                      基本信息
+                    </h4>
+                    <div className="space-y-1.5 text-sm">
+                      <div className="flex justify-between"><span className="text-gray-400">名称</span><span className="text-white">{selectedProtein.nameCn}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-400">英文名</span><span className="text-white text-right truncate">{selectedProtein.name}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-400">基因名</span><span className="text-white font-mono">{selectedProtein.geneName}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-400">物种来源</span><span className="text-white text-right truncate">{selectedProtein.organism}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-400">氨基酸数量</span><span className="text-white">{selectedProtein.length}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-400">PDB ID</span>
+                        <a href={`https://www.rcsb.org/structure/${selectedProtein.pdbId}`} target="_blank" rel="noopener noreferrer" className="text-bio-cyan hover:underline flex items-center gap-1">
+                          {selectedProtein.pdbId}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="text-yellow-400 font-medium mb-2 text-sm">蛋白质功能</h4>
+                    <p className="text-gray-300 text-sm leading-relaxed">{selectedProtein.function}</p>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <h4 className="text-purple-400 font-medium mb-2 text-sm">相关通路</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProtein.pathway.map((p, i) => (
+                      <span key={i} className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs">{p}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
+                <div className="p-3 border-b border-white/10">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base sm:text-lg font-semibold text-white">{selectedProtein.nameCn}</h3>
+                      <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">{selectedProtein.category}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex bg-space-700/50 rounded-lg p-1">
+                        {(['cartoon', 'stick', 'sphere'] as const).map((style) => (
+                          <button key={style} onClick={() => changeViewStyle(style)} className={`px-2 py-0.5 rounded text-xs transition-colors ${viewStyle === style ? 'bg-bio-cyan/20 text-bio-cyan' : 'text-gray-400 hover:text-white'}`}>
+                            {style === 'cartoon' ? '带状' : style === 'stick' ? '棍状' : '球状'}
+                          </button>
+                        ))}
+                      </div>
+                      <button onClick={toggleSpin} className={`px-2 py-0.5 rounded text-xs transition-colors ${isSpinning ? 'bg-red-500/20 text-red-400' : 'bg-space-700/50 text-gray-400 hover:text-white'}`}>
+                        {isSpinning ? '停止' : '旋转'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative" style={{ height: '250px' }}>
+                  {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-space-900/80 z-10">
+                      <Loader2 className="w-8 h-8 text-bio-cyan animate-spin" />
+                    </div>
+                  )}
+                  <div ref={viewerRef} className="w-full h-full" />
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="bg-space-800/50 rounded-xl border border-white/10 p-8 text-center">
+              <Microscope className="w-16 h-16 mx-auto mb-4 opacity-30" />
+              <p className="text-gray-500">从左侧列表选择蛋白质</p>
+              <p className="text-xs text-gray-600 mt-2">查看蛋白质结构和详细信息</p>
+            </div>
+          )}
+        </div>
       </div>
     </motion.div>
   );
