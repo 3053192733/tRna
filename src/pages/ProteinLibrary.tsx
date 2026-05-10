@@ -439,55 +439,8 @@ export default function ProteinLibrary() {
         <div className="flex-1 flex flex-col overflow-hidden">
           {selectedProtein ? (
             <>
-              <div className="flex-shrink-0 bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
-                <div className="p-4 border-b border-white/10">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-white">{selectedProtein.name}</h3>
-                      <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">
-                        {selectedProtein.category}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex bg-space-700/50 rounded-lg p-1">
-                        {(['cartoon', 'stick', 'sphere'] as const).map((style) => (
-                          <button
-                            key={style}
-                            onClick={() => changeViewStyle(style)}
-                            className={`px-2 py-0.5 rounded text-xs transition-colors ${
-                              viewStyle === style ? 'bg-bio-cyan/20 text-bio-cyan' : 'text-gray-400 hover:text-white'
-                            }`}
-                          >
-                            {style === 'cartoon' ? '带状' : style === 'stick' ? '棍状' : '球状'}
-                          </button>
-                        ))}
-                      </div>
-                      <button
-                        onClick={toggleSpin}
-                        className={`px-2 py-0.5 rounded text-xs transition-colors ${
-                          isSpinning 
-                            ? 'bg-red-500/20 text-red-400' 
-                            : 'bg-space-700/50 text-gray-400 hover:text-white'
-                        }`}
-                      >
-                        {isSpinning ? '停止' : '旋转'}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative" style={{ height: '280px' }}>
-                  {isLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-space-900/80 z-10">
-                      <Loader2 className="w-8 h-8 text-bio-cyan animate-spin" />
-                    </div>
-                  )}
-                  <div ref={viewerRef} className="w-full h-full" />
-                </div>
-              </div>
-
-              <div className="flex-1 mt-4 overflow-y-auto">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="flex-1 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-3 mb-4">
                   <div className="p-4 bg-space-800/50 rounded-xl border border-white/10">
                     <h4 className="text-bio-cyan font-medium mb-2 flex items-center gap-2 text-sm">
                       <Info className="w-4 h-4" />
@@ -538,6 +491,53 @@ export default function ProteinLibrary() {
                       ))}
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <div className="flex-shrink-0 bg-space-800/50 rounded-xl border border-white/10 overflow-hidden">
+                <div className="p-4 border-b border-white/10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <h3 className="text-lg font-semibold text-white">{selectedProtein.name}</h3>
+                      <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">
+                        {selectedProtein.category}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex bg-space-700/50 rounded-lg p-1">
+                        {(['cartoon', 'stick', 'sphere'] as const).map((style) => (
+                          <button
+                            key={style}
+                            onClick={() => changeViewStyle(style)}
+                            className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                              viewStyle === style ? 'bg-bio-cyan/20 text-bio-cyan' : 'text-gray-400 hover:text-white'
+                            }`}
+                          >
+                            {style === 'cartoon' ? '带状' : style === 'stick' ? '棍状' : '球状'}
+                          </button>
+                        ))}
+                      </div>
+                      <button
+                        onClick={toggleSpin}
+                        className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                          isSpinning 
+                            ? 'bg-red-500/20 text-red-400' 
+                            : 'bg-space-700/50 text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        {isSpinning ? '停止' : '旋转'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative" style={{ height: '280px' }}>
+                  {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-space-900/80 z-10">
+                      <Loader2 className="w-8 h-8 text-bio-cyan animate-spin" />
+                    </div>
+                  )}
+                  <div ref={viewerRef} className="w-full h-full" />
                 </div>
               </div>
             </>
