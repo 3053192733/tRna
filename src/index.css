@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'IBM Plex Sans', sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-space-900 text-gray-100 min-h-screen;
+}
+
+::selection {
+  @apply bg-bio-cyan/30 text-white;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-space-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-bio-cyan/40 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-bio-cyan/60;
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-bio-cyan/20 border border-bio-cyan/50 text-bio-cyan rounded-full
+           font-medium transition-all duration-300
+           hover:bg-bio-cyan/30 hover:border-bio-cyan hover:shadow-[0_0_20px_rgba(0,212,170,0.3)]
+           active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-bio-purple/20 border border-bio-purple/50 text-bio-purple rounded-full
+           font-medium transition-all duration-300
+           hover:bg-bio-purple/30 hover:border-bio-purple hover:shadow-[0_0_20px_rgba(124,58,237,0.3)]
+           active:scale-95;
+  }
+
+  .card {
+    @apply bg-space-800/50 backdrop-blur-sm border border-white/10 rounded-2xl p-6
+           transition-all duration-300 hover:border-bio-cyan/30 hover:shadow-[0_0_30px_rgba(0,212,170,0.1)];
+  }
+
+  .card-hover {
+    @apply hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(0,212,170,0.2)];
+  }
+
+  .glow-text {
+    @apply text-shadow-[0_0_10px_rgba(0,212,170,0.5)];
+  }
+
+  .input-bio {
+    @apply w-full bg-space-700/50 border border-white/20 rounded-xl px-4 py-3
+           text-white placeholder-gray-500 font-mono text-lg
+           focus:outline-none focus:border-bio-cyan/50 focus:ring-2 focus:ring-bio-cyan/20
+           transition-all duration-300;
+  }
+
+  .nucleotide-A { @apply text-nucleotide-A; }
+  .nucleotide-T { @apply text-nucleotide-T; }
+  .nucleotide-G { @apply text-nucleotide-G; }
+  .nucleotide-U { @apply text-nucleotide-U; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.gradient-animated {
+  background: linear-gradient(-45deg, #0a0e1a, #00d4aa20, #7c3aed20, #0a0e1a);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.glass {
+  @apply bg-white/5 backdrop-blur-lg border border-white/10;
+}
