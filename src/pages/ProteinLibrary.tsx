@@ -343,8 +343,10 @@ export default function ProteinLibrary() {
     if (viewerInstanceRef.current) {
       if (style === 'cartoon') {
         viewerInstanceRef.current.setStyle({}, { cartoon: { color: 'spectrum' } });
+      } else if (style === 'stick') {
+        viewerInstanceRef.current.setStyle({}, { stick: { colorscheme: 'Jmol' } });
       } else {
-        viewerInstanceRef.current.setStyle({}, { [style]: { color: 'white' } });
+        viewerInstanceRef.current.setStyle({}, { sphere: { colorscheme: 'Jmol' } });
       }
       viewerInstanceRef.current.render();
     }
