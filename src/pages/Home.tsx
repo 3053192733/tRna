@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Dna, Atom, Table2, Calculator, FlaskConical, ArrowRight, Sparkles } from 'lucide-react';
+import { Dna, Atom, Table2, Calculator, FlaskConical, ArrowRight, Sparkles, Microscope } from 'lucide-react';
 
 const tools = [
   { path: '/analyzer', icon: Atom, title: 'DNA/RNA 分析器', description: '序列输入、互补链生成、转录与翻译', color: '#00d4aa' },
   { path: '/codon', icon: Table2, title: '密码子表', description: '64 密码子与 20 氨基酸的可视化查询', color: '#7c3aed' },
   { path: '/calculator', icon: Calculator, title: '分子量计算', description: 'DNA、RNA、蛋白质的分子量精确计算', color: '#eab308' },
+  { path: '/protein-library', icon: Microscope, title: '蛋白质数据库', description: '20种常见蛋白质的结构与功能查询', color: '#3b82f6' },
   { path: '/trna', icon: FlaskConical, title: 'tRNA 可视化', description: '三叶草结构的动态展示与交互', color: '#f472b6' },
 ];
 
@@ -22,11 +23,12 @@ export default function Home() {
           <span className="px-4 py-2 bg-bio-cyan/10 border border-bio-cyan/30 rounded-full text-bio-cyan text-sm">DNA 分析</span>
           <span className="px-4 py-2 bg-bio-purple/10 border border-bio-purple/30 rounded-full text-bio-purple text-sm">密码子表</span>
           <span className="px-4 py-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full text-yellow-400 text-sm">分子量计算</span>
+          <span className="px-4 py-2 bg-blue-400/10 border border-blue-400/30 rounded-full text-blue-400 text-sm">蛋白质数据库</span>
           <span className="px-4 py-2 bg-pink-400/10 border border-pink-400/30 rounded-full text-pink-400 text-sm">tRNA 可视化</span>
         </motion.div>
       </motion.div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-16">
+      <div className="grid md:grid-cols-3 gap-6 mb-16">
         {tools.map((tool, index) => (
           <motion.div key={tool.path} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 * index + 0.4 }}>
             <Link to={tool.path}>
