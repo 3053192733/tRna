@@ -1,11 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Dna, Atom, Table2, Calculator, FlaskConical } from 'lucide-react';
+import { Dna, Atom, Table2, Calculator, FlaskConical, Microscope } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: '首页', icon: Dna },
   { path: '/analyzer', label: 'DNA分析器', icon: Atom },
   { path: '/codon', label: '密码子表', icon: Table2 },
   { path: '/calculator', label: '分子量计算', icon: Calculator },
+  { path: '/protein-library', label: '蛋白质库', icon: Microscope },
   { path: '/trna', label: 'tRNA可视化', icon: FlaskConical },
 ];
 

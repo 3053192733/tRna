@@ -9,6 +9,7 @@ const Analyzer = lazy(() => import('@/pages/Analyzer'));
 const CodonTablePage = lazy(() => import('@/pages/CodonTable'));
 const Calculator = lazy(() => import('@/pages/Calculator'));
 const TRNAVisualizer = lazy(() => import('@/pages/TRNAVisualizer'));
+const ProteinLibrary = lazy(() => import('@/pages/ProteinLibrary'));
 
 function Loading() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/codon" element={<CodonTablePage />} />
               <Route path="/calculator" element={<Calculator />} />
               <Route path="/trna" element={<TRNAVisualizer />} />
+              <Route path="/protein-library" element={<ProteinLibrary />} />
             </Routes>
           </Suspense>
         </Layout>
