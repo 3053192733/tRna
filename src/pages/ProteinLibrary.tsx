@@ -6,6 +6,7 @@ import { Dna, Search, ExternalLink, Info, Loader2, Microscope } from 'lucide-rea
 interface Protein {
   id: string;
   name: string;
+  nameCn: string;
   pdbId: string;
   description: string;
   organism: string;
@@ -20,6 +21,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'hba',
     name: 'Hemoglobin Alpha',
+    nameCn: '血红蛋白 α 亚基',
     pdbId: '1A3N',
     description: '血红蛋白 α 亚基',
     organism: 'Homo sapiens',
@@ -32,6 +34,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'hbb',
     name: 'Hemoglobin Beta',
+    nameCn: '血红蛋白 β 亚基',
     pdbId: '1A3N',
     description: '血红蛋白 β 亚基',
     organism: 'Homo sapiens',
@@ -44,6 +47,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'gfp',
     name: 'Green Fluorescent Protein',
+    nameCn: '绿色荧光蛋白',
     pdbId: '1GFL',
     description: '绿色荧光蛋白',
     organism: 'Aequorea victoria',
@@ -56,6 +60,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'insulin',
     name: 'Insulin',
+    nameCn: '胰岛素',
     pdbId: '4INS',
     description: '胰岛素',
     organism: 'Homo sapiens',
@@ -68,6 +73,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'histone-h3',
     name: 'Histone H3',
+    nameCn: '组蛋白 H3',
     pdbId: '1AOI',
     description: '组蛋白 H3',
     organism: 'Homo sapiens',
@@ -80,6 +86,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'ubiquitin',
     name: 'Ubiquitin',
+    nameCn: '泛素',
     pdbId: '1UBQ',
     description: '泛素',
     organism: 'Homo sapiens',
@@ -92,6 +99,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'cytochrome-c',
     name: 'Cytochrome C',
+    nameCn: '细胞色素 C',
     pdbId: '1HRC',
     description: '细胞色素 C',
     organism: 'Homo sapiens',
@@ -104,6 +112,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'lysozyme',
     name: 'Lysozyme',
+    nameCn: '溶菌酶',
     pdbId: '1LZE',
     description: '溶菌酶',
     organism: 'Gallus gallus',
@@ -116,6 +125,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'myoglobin',
     name: 'Myoglobin',
+    nameCn: '肌红蛋白',
     pdbId: '1MBN',
     description: '肌红蛋白',
     organism: 'Physeter catodon',
@@ -128,6 +138,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'rnase-a',
     name: 'Ribonuclease A',
+    nameCn: '核糖核酸酶 A',
     pdbId: '7RSA',
     description: '核糖核酸酶 A',
     organism: 'Bos taurus',
@@ -140,6 +151,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'trypsin',
     name: 'Trypsin',
+    nameCn: '胰蛋白酶',
     pdbId: '1G36',
     description: '胰蛋白酶',
     organism: 'Bos taurus',
@@ -152,6 +164,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'thioredoxin',
     name: 'Thioredoxin',
+    nameCn: '硫氧还蛋白',
     pdbId: '1TRX',
     description: '硫氧还蛋白',
     organism: 'Escherichia coli',
@@ -164,6 +177,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'ras',
     name: 'Ras Protein',
+    nameCn: 'Ras 蛋白',
     pdbId: '5P21',
     description: 'Ras 蛋白',
     organism: 'Homo sapiens',
@@ -176,6 +190,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'pk-a',
     name: 'Protein Kinase A',
+    nameCn: '蛋白激酶 A',
     pdbId: '1ATP',
     description: '蛋白激酶 A',
     organism: 'Bos taurus',
@@ -188,6 +203,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'sod1',
     name: 'Superoxide Dismutase',
+    nameCn: '超氧化物歧化酶',
     pdbId: '2SOD',
     description: '超氧化物歧化酶',
     organism: 'Homo sapiens',
@@ -200,6 +216,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'p53',
     name: 'P53',
+    nameCn: '肿瘤抑制蛋白 P53',
     pdbId: '1TUP',
     description: '肿瘤抑制蛋白 P53',
     organism: 'Homo sapiens',
@@ -212,6 +229,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'calmodulin',
     name: 'Calmodulin',
+    nameCn: '钙调蛋白',
     pdbId: '1CLL',
     description: '钙调蛋白',
     organism: 'Rattus norvegicus',
@@ -224,6 +242,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'adh',
     name: 'Alcohol Dehydrogenase',
+    nameCn: '乙醇脱氢酶',
     pdbId: '6ADH',
     description: '乙醇脱氢酶',
     organism: 'Homo sapiens',
@@ -236,6 +255,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'egfp',
     name: 'Enhanced GFP',
+    nameCn: '增强型绿色荧光蛋白',
     pdbId: '2Y0G',
     description: '增强型绿色荧光蛋白',
     organism: 'Aequorea victoria',
@@ -248,6 +268,7 @@ const PROTEIN_DATABASE: Protein[] = [
   {
     id: 'chymotrypsin',
     name: 'Chymotrypsin',
+    nameCn: '糜蛋白酶',
     pdbId: '4CHA',
     description: '糜蛋白酶',
     organism: 'Bos taurus',
@@ -272,8 +293,8 @@ export default function ProteinLibrary() {
   const [selectedCategory, setSelectedCategory] = useState('全部');
 
   const filteredProteins = PROTEIN_DATABASE.filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const matchesSearch = p.nameCn.includes(searchTerm) ||
+                         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          p.geneName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === '全部' || p.category === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -426,9 +447,9 @@ export default function ProteinLibrary() {
                     <div className={`text-sm font-medium truncate ${
                       selectedProtein?.id === protein.id ? 'text-bio-cyan' : 'text-white'
                     }`}>
-                      {protein.name}
+                      {protein.nameCn}
                     </div>
-                    <div className="text-xs text-gray-400">{protein.geneName}</div>
+                    <div className="text-xs text-gray-400">{protein.name}</div>
                   </div>
                 </div>
               </button>
@@ -447,6 +468,14 @@ export default function ProteinLibrary() {
                       基本信息
                     </h4>
                     <div className="space-y-1.5 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">名称</span>
+                        <span className="text-white">{selectedProtein.nameCn}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">英文名</span>
+                        <span className="text-white text-right max-w-[180px] truncate">{selectedProtein.name}</span>
+                      </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">基因名</span>
                         <span className="text-white font-mono">{selectedProtein.geneName}</span>
@@ -498,7 +527,7 @@ export default function ProteinLibrary() {
                 <div className="p-4 border-b border-white/10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-semibold text-white">{selectedProtein.name}</h3>
+                      <h3 className="text-lg font-semibold text-white">{selectedProtein.nameCn}</h3>
                       <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs">
                         {selectedProtein.category}
                       </span>
