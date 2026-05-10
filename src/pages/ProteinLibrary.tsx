@@ -288,7 +288,7 @@ export default function ProteinLibrary() {
   const [selectedProtein, setSelectedProtein] = useState<Protein | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [viewStyle, setViewStyle] = useState<'cartoon' | 'stick' | 'sphere'>('cartoon');
-  const [isSpinning, setIsSpinning] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('全部');
 
@@ -341,7 +341,11 @@ export default function ProteinLibrary() {
   const changeViewStyle = (style: 'cartoon' | 'stick' | 'sphere') => {
     setViewStyle(style);
     if (viewerInstanceRef.current) {
-      viewerInstanceRef.current.setStyle({}, { [style]: {} });
+      if (style === 'cartoon') {
+        viewerInstanceRef.current.setStyle({}, { cartoon: { color: 'spectrum' } });
+      } else {
+        viewerInstanceRef.current.setStyle({}, { [style]: { color: 'white' } });
+      }
       viewerInstanceRef.current.render();
     }
   };
